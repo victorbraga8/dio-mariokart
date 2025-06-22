@@ -106,11 +106,9 @@ export async function playRaceEngine() {
 
     console.log("** Blocks Winned by Player **");
     console.log(player1.name, player1.blocks);
-    console.log(player2.name, player2.blocks);
+    console.log(player2.name, player2.blocks, "\n");
 
-    console.log("** Wins **");
-    console.log(player1.name, player1.winnerPoints);
-    console.log(player2.name, player2.winnerPoints);
+    console.log(`Wins: ${player1.name} ${player1.winnerPoints} | ${player2.name} ${player2.winnerPoints} `);
 
     const champ =
         player1.winnerPoints > player2.winnerPoints
@@ -118,6 +116,6 @@ export async function playRaceEngine() {
             : player2.winnerPoints > player1.winnerPoints
                 ? player2.name
                 : "Draw";
-    console.log("Final Winner:", champ);
+    console.log("Winner:", champ);
 }
 
