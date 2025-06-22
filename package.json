@@ -1,13 +1,17 @@
 {
-  "name": "node",
+  "name": "mario-kart-challenge",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node  --watch src/index.js"
+    "dev": "node --watch src/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "mario kart",
+    "node",
+    "dio.me"
+  ],
+  "author": "Victor Braga",
   "license": "ISC",
   "description": "",
   "type": "module"
