@@ -46,7 +46,6 @@ export async function getRandomBlock() {
     //     random,
     //     result
     // }
-    console.log("Result: ", result);
     return result
 }
 
@@ -85,8 +84,8 @@ async function logResult(info) {
 
     const finalResult = {
         result,
-        player1: { blockPoint: bp1, winnerPoints: player1.winnerPoints },
-        player2: { blockPoint: bp2, winnerPoints: player2.winnerPoints },
+        player1: { character: player1.name, blockPoint: bp1, winnerPoints: player1.winnerPoints },
+        player2: { character: player2.name, blockPoint: bp2, winnerPoints: player2.winnerPoints },
         winner: winnerName
     };
 
@@ -99,7 +98,6 @@ export async function playRaceEngine() {
 
     for (let i = 1; i <= 5; i++) {
         const result = await getRandomBlock();
-        console.log('result 2: ', result)
         const rollDice1 = await rollDice();
         const rollDice2 = await rollDice();
 
