@@ -59,12 +59,64 @@ function translateParameters(block) {
 }
 
 async function logResult(info) {
+    let result;
+    let winner;
     const { block, rollDice1, rollDice2, player1, player2 } = info;
-    console.log(`Block: ${block} | ${player1.name} - rolled ${rollDice1} + ${player1[translateParameters(block)]} | ${player2.name} - rolled ${rollDice2} + ${player2[translateParameters(block)]}  \n`);
+
+    let player1Section = `${player1.name}: ${rollDice1} + ${player1[translateParameters(block)]} : Points: ${result = rollDice1 + player1[translateParameters(block)]}`;
+
+    let player2Section = `${player2.name}: ${rollDice2} + ${player2[translateParameters(block)]} = Points: ${result = rollDice2 + player2[translateParameters(block)]}`;
+
+    let winnerPoint = 0
+
+    const finalResult = {
+        block,
+        player1: {
+            name: player1.name,
+            points: {
+                blockPoint: rollDice1 + player1[translateParameters(block)],
+                winnerPoint
+            }
+        },
+        player2: {
+            name: player2.name,
+            points: {
+                blockPoint: rollDice2 + player2[translateParameters(block)],
+                winnerPoint
+            }
+        },
+        result,
+        winner
+    }
+
+    if (Number(finalResult.player1.points) > Number(finalResult.player2.points)) {
+        finalResult.result = player1.name;
+        finalResult.player1.points.winnerPoint = winnerPoint + 1
+    }
+    else if (Number(finalResult.player1.points) < Number(finalResult.player2.points)) {
+        finalResult.result = player2.name;
+        finalResult.player2.points.winnerPoint = winnerPoint + 1
+    }
+    else {
+        finalResult.result = 'Draw';
+    }
+
+    if (finalResult.player1.points.winnerPoint > finalResult.player2.points.winnerPoint) {
+        finalResult.winner = player1.name;
+    }
+    else if (finalResult.player1.points.winnerPoint < finalResult.player2.points.winnerPoint) {
+        finalResult.winner = player2.name;
+    }
+    else {
+        finalResult.winner = 'Draw';
+    }
+
+    console.log(`Block: ${finalResult.block} | ${finalResult.player1.name}: ${finalResult.player1.points.blockPoint} - ${finalResult.player2.name}: ${finalResult.player2.points.blockPoint} | Result: ${finalResult.result}\n`);
+
+    // console.log(`Winner: ${finalResult.winner} with ${finalResult.player1.points.winnerPoint} points for ${player1.name} and ${finalResult.player2.points.winnerPoint} points for ${player2.name}\n`);
 }
 
-export async function playRaceEngine(character1, character2) {
-
+export async function playRaceEngine() {
     const { player1, player2 } = players;
 
     let block
@@ -75,25 +127,6 @@ export async function playRaceEngine(character1, character2) {
         random = block.random
         let rollDice1 = await rollDice();
         let rollDice2 = await rollDice();
-
-        let totalTestSkill1 = 0;
-        let totalTestSkill2 = 0;
-
-        if (block == "straight") {
-            totalTestSkill1 = rollDice1 + character1.speed;
-            totalTestSkill2 = rollDice2 + character2.speed;
-        }
-        if (block == "curve") {
-            totalTestSkill1 = rollDice1 + character1.maneuverability;
-            totalTestSkill2 = rollDice2 + character2.maneuverability;
-        }
-
-        if (block == "confrontation") {
-            // totalTestSkill1 = rollDice1 + character1.power;
-            let powerResult1 = rollDice1 + character1.power;
-            let powerResult2 = rollDice2 + character2.power;
-
-        }
 
         const info = {
             random,
