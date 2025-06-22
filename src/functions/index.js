@@ -1,20 +1,24 @@
 
+
 export const players = {
     player1: {
         name: "Mario",
         speed: 4,
         maneuverability: 3,
         power: 3,
-        points: 0
+        blocks: [],
+        winnerPoints: 0
     },
     player2: {
         name: "Luigi",
         speed: 3,
         maneuverability: 4,
         power: 4,
-        points: 0
+        blocks: [],
+        winnerPoints: 0
     }
-}
+};
+
 
 export const parameters = {
     straight: 0.33,
@@ -38,11 +42,12 @@ export async function getRandomBlock() {
         default:
             result = 'confrontation'
     }
-    const info = {
-        random,
-        result
-    }
-    return info
+    // const info = {
+    //     random,
+    //     result
+    // }
+    console.log("Result: ", result);
+    return result
 }
 
 function translateParameters(block) {
@@ -59,85 +64,62 @@ function translateParameters(block) {
 }
 
 async function logResult(info) {
-    let result;
-    let winner;
-    const { block, rollDice1, rollDice2, player1, player2 } = info;
+    const { result, rollDice1, rollDice2, player1, player2 } = info;
+    let winnerName;
 
-    let player1Section = `${player1.name}: ${rollDice1} + ${player1[translateParameters(block)]} : Points: ${result = rollDice1 + player1[translateParameters(block)]}`;
+    const param = translateParameters(result);
+    const bp1 = rollDice1 + player1[param];
+    const bp2 = rollDice2 + player2[param];
 
-    let player2Section = `${player2.name}: ${rollDice2} + ${player2[translateParameters(block)]} = Points: ${result = rollDice2 + player2[translateParameters(block)]}`;
-
-    let winnerPoint = 0
+    if (bp1 > bp2) {
+        player1.winnerPoints++;
+        player1.blocks.push(result);
+        winnerName = player1.name;
+    } else if (bp2 > bp1) {
+        player2.winnerPoints++;
+        player2.blocks.push(result);
+        winnerName = player2.name;
+    } else {
+        winnerName = "Draw";
+    }
 
     const finalResult = {
-        block,
-        player1: {
-            name: player1.name,
-            points: {
-                blockPoint: rollDice1 + player1[translateParameters(block)],
-                winnerPoint
-            }
-        },
-        player2: {
-            name: player2.name,
-            points: {
-                blockPoint: rollDice2 + player2[translateParameters(block)],
-                winnerPoint
-            }
-        },
         result,
-        winner
-    }
+        player1: { blockPoint: bp1, winnerPoints: player1.winnerPoints },
+        player2: { blockPoint: bp2, winnerPoints: player2.winnerPoints },
+        winner: winnerName
+    };
 
-    if (Number(finalResult.player1.points) > Number(finalResult.player2.points)) {
-        finalResult.result = player1.name;
-        finalResult.player1.points.winnerPoint = winnerPoint + 1
-    }
-    else if (Number(finalResult.player1.points) < Number(finalResult.player2.points)) {
-        finalResult.result = player2.name;
-        finalResult.player2.points.winnerPoint = winnerPoint + 1
-    }
-    else {
-        finalResult.result = 'Draw';
-    }
-
-    if (finalResult.player1.points.winnerPoint > finalResult.player2.points.winnerPoint) {
-        finalResult.winner = player1.name;
-    }
-    else if (finalResult.player1.points.winnerPoint < finalResult.player2.points.winnerPoint) {
-        finalResult.winner = player2.name;
-    }
-    else {
-        finalResult.winner = 'Draw';
-    }
-
-    console.log(`Block: ${finalResult.block} | ${finalResult.player1.name}: ${finalResult.player1.points.blockPoint} - ${finalResult.player2.name}: ${finalResult.player2.points.blockPoint} | Result: ${finalResult.result}\n`);
-
-    // console.log(`Winner: ${finalResult.winner} with ${finalResult.player1.points.winnerPoint} points for ${player1.name} and ${finalResult.player2.points.winnerPoint} points for ${player2.name}\n`);
+    console.log(finalResult);
+    return finalResult;
 }
 
 export async function playRaceEngine() {
     const { player1, player2 } = players;
 
-    let block
-    let random
-
     for (let i = 1; i <= 5; i++) {
-        block = await getRandomBlock();
-        random = block.random
-        let rollDice1 = await rollDice();
-        let rollDice2 = await rollDice();
+        const result = await getRandomBlock();
+        console.log('result 2: ', result)
+        const rollDice1 = await rollDice();
+        const rollDice2 = await rollDice();
 
-        const info = {
-            random,
-            block: block.result,
-            rollDice1,
-            rollDice2,
-            player1,
-            player2
-        }
-        await logResult(info);
+        await logResult({ result, rollDice1, rollDice2, player1, player2 });
     }
 
+    console.log("** Blocks Winned by Player **");
+    console.log(player1.name, player1.blocks);
+    console.log(player2.name, player2.blocks);
 
+    console.log("** Wins **");
+    console.log(player1.name, player1.winnerPoints);
+    console.log(player2.name, player2.winnerPoints);
+
+    const champ =
+        player1.winnerPoints > player2.winnerPoints
+            ? player1.name
+            : player2.winnerPoints > player1.winnerPoints
+                ? player2.name
+                : "Draw";
+    console.log("Final Winner:", champ);
 }
+
